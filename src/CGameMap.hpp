@@ -25,16 +25,16 @@ class CNoticeDisplay;
 class CLayoutManager;
 class CDlgMsgWin;
 class CPauseMenu;
-class Unknown;
+class CTutorialMsg;
 class CMsgBalloon;
 class CEnemyInfo;
 class CNumericInput;
-class CUiBase {
+class IDlg { // placeholder for matching, it must be something that CDlgPiiSelector, CDlgMsgWin, and CDlgCollection inherit from
 public:
     virtual u32 vfunc0();
     virtual u32 vfunc4();
     virtual u32 vfunc8();
-    virtual u32 vfuncC();       // placeholder
+    virtual u32 vfuncC();       
     virtual u32 vfunc10();
     virtual u32 vfunc14();
     virtual bool vfunc18();
@@ -55,21 +55,21 @@ class CGameMap : std::tr1::enable_shared_from_this<CGameMap> {
 public:
     virtual u8 FUN_800a7f70();
     virtual MapDesc* getMapDesc();
-    virtual bool isUIOpen(std::tr1::shared_ptr<CUiBase>* sharedPtr);
-    virtual void resetOpenUi_fn_800a9b60(std::tr1::shared_ptr<CUiBase>* sharedPtr);
+    virtual bool tryOpenDlg(std::tr1::shared_ptr<IDlg>* sharedPtr);
+    virtual void resetCurrentDlg(std::tr1::shared_ptr<IDlg>* sharedPtr);
     virtual s32 getBattleRoyalTimer();
     virtual bool isTimerSpeedActive();
     virtual void resetBattleRoyalTimerSpeed();
     virtual void addBattleRoyalTimer(s32 deltaFrames);
     virtual void setBattleRoyalTimer(s32 battleRoyalTimer, s32 battleRoyalTimerSpeed);
     virtual void setMovementLockTimer(s32 lockTimer);
-    virtual void setHideUiFlag(u8 hideUiFlag);
-    virtual CUiBase* getOpenUi();
+    virtual void setHideUiFlag(bool hideUiFlag);
+    virtual IDlg* getCurrentDlg();
     virtual CPostEffect* getPostEffect();
     virtual CNumericInput* getNumericInput();
     virtual CEnemyInfo* getEnemyInfo();
     virtual CMsgBalloon* getMsgBalloon();
-    virtual Unknown* getUnknownClass();
+    virtual CTutorialMsg* getTutorialMsg();
     virtual CPauseMenu* getPauseMenu();
     virtual CLayoutManager* getLayoutManager();
     virtual CComboDisplay* getComboDisplay();
@@ -89,11 +89,11 @@ public:
 
     MapDesc* m_mapDesc; // 0xC
     std::tr1::shared_ptr<CPpuEnv> m_ppuEnv; // 0x10
-    u8 m_hideUIFlag; // 0x18
-    std::tr1::weak_ptr<CUiBase> m_field19_0x1c;
+    bool m_hideUIFlag; // ? 0x18
+    std::tr1::weak_ptr<IDlg> m_currentDlg; // 0x1C
     s32 m_battleRoyalTimer; // 0x24
     s32 m_battleRoyalTimerSpeed; // 0x28
-    s32 m_movementLockTimer; // 0x2C
+    s32 m_movementLockTimer; // ? 0x2C
     char pad0x40[0x10];
     std::tr1::shared_ptr<BWorld> m_bWorld; // 0x40
     std::tr1::shared_ptr<CPostEffect> m_postEffect; // 0x48
@@ -110,7 +110,7 @@ public:
     std::tr1::shared_ptr<CLayoutManager> m_layoutManager; // 0xA0
     std::tr1::shared_ptr<CDlgMsgWin> m_dlgMsgWin; // 0xA8
     std::tr1::shared_ptr<CPauseMenu> m_pauseMenu; // 0xB0
-    std::tr1::shared_ptr<Unknown> m_unknown; // 0xB8
+    std::tr1::shared_ptr<CTutorialMsg> m_tutorialMsg; // 0xB8
     std::tr1::shared_ptr<CMsgBalloon> m_msgBalloon; // 0xC0
     std::tr1::shared_ptr<CEnemyInfo> m_enemyInfo; // 0xC8
     std::tr1::shared_ptr<CNumericInput> m_numericInput; // 0xD0

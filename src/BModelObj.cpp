@@ -22,7 +22,7 @@ BModelObj::BModelObj(u32 group) : BWorldObj(group | 0x20), BSoundSource() {
     m_field112_0xF4 = &m_field112_0xF0;
 }
 
-Vec3 BModelObj::getHitboxScale() {
+nw4r::math::VEC3 BModelObj::getHitboxScale() {
     return m_hitBoxScale;
 }
 
@@ -117,7 +117,7 @@ u32 BWorldObj::vfunc_80057CF0() {return 0;}
 //  }
 //}
 
-Vec3 BWorldObj::getPosition() {
+nw4r::math::VEC3 BWorldObj::getPosition() {
     return m_position;
 }
 

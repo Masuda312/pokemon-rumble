@@ -323,6 +323,7 @@ config.libs = [
             Object(NonMatching, "CGameSession.cpp"),
             Object(NonMatching, "CGameStage.cpp"),
             Object(NonMatching, "CGameMap.cpp"),
+            Object(NonMatching, "CPiiBox.cpp"),
             Object(NonMatching, "CPiiCollectionBox.cpp"),
             Object(NonMatching, "CPiiPersonalData.cpp"),
             Object(NonMatching, "PiiProp.cpp"),

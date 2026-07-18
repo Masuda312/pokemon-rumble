@@ -1,20 +1,15 @@
 #include <types.h>
+#include <nw4r/math.h>
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
 #include <BWorld.hpp>
-
-struct Vec3 {
-    f32 x;
-    f32 y;
-    f32 z;
-};
 
 class BWorldObj : std::tr1::enable_shared_from_this<BWorldObj> {
 public:
     virtual ~BWorldObj();
-    virtual void setPosition(const Vec3& pos);
-    virtual void setScale(const Vec3& scale);
+    virtual void setPosition(const nw4r::math::VEC3& pos);
+    virtual void setScale(const nw4r::math::VEC3& scale);
     virtual void setAngle(f32 angle);
-    virtual Vec3 getPosition();
+    virtual nw4r::math::VEC3 getPosition();
     virtual u32 vfunc_80057CF0();
     virtual u32 vfunc_80057CE0();
     virtual void vfunc_80057CD0();
@@ -29,8 +24,8 @@ public:
     std::tr1::weak_ptr<BWorldObj> m_parentObj; // 0x1C
     std::tr1::shared_ptr<s32> m_unknown; // 0x24
     f32 m_angle; // 0x2C
-    Vec3 m_position; // 0x30
-    Vec3 m_scale; // 0x3C
+    nw4r::math::VEC3 m_position; // 0x30
+    nw4r::math::VEC3 m_scale; // 0x3C
 
     void setParentObj(std::tr1::weak_ptr<BWorldObj>& parentObj);
 };

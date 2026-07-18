@@ -193,9 +193,6 @@ u16* CPiiPersonalData::getTraitName() {
     return getLocalizedName(m_trait + 0x6001D, &lbl_804B5C48);
 }
 
-#define BITFLAG_SET(bitflag, mask) (bitflag |= mask)
-#define BITFLAG_CLEAR(bitflag, mask) (bitflag &= ~mask)
-const u32 BOSS_FLAG = 0x80000000;
 void CPiiPersonalData::setBossFlag(bool enable) {
     if (enable) {
         BITFLAG_SET(m_flags, BOSS_FLAG);
@@ -204,7 +201,6 @@ void CPiiPersonalData::setBossFlag(bool enable) {
     }
 }
 
-const u32 FAVORITE_FLAG = 0x00000002;
 void CPiiPersonalData::setFavoriteFlag(bool enable) {
     if (enable) {
         BITFLAG_SET(m_flags, FAVORITE_FLAG);
@@ -213,7 +209,6 @@ void CPiiPersonalData::setFavoriteFlag(bool enable) {
     }
 }
 
-const u32 RELEASE_FLAG = 0x00100000;
 void CPiiPersonalData::setReleaseFlag(bool enable) {
     if (enable) {
         BITFLAG_SET(m_flags, RELEASE_FLAG);

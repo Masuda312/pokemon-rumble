@@ -1,5 +1,4 @@
 #include <types.h>
-//#include <nw4r/math.h>
 #include <BSoundSource.hpp>
 #include <BWorldObj.hpp>
 #include <CModel.hpp>
@@ -21,7 +20,7 @@ public:
     virtual void vfunc_80057A60();
     virtual void vfunc_80057D20();
     virtual void setAngle(f32 angle);
-    virtual Vec3 getHitboxScale();
+    virtual nw4r::math::VEC3 getHitboxScale();
     virtual u32* get0xEC();
 
     BModelObj(u32 group);
@@ -36,10 +35,10 @@ public:
     u32 m_updateFlag; // 0x70
     CModel* m_model; // 0x74
     u32 m_field112_0x78; // 0x78
-    Vec3 m_collisionScale; // 0x7C
-    Vec3 m_hitBoxScale; // 0x88
+    nw4r::math::VEC3 m_collisionScale; // 0x7C
+    nw4r::math::VEC3 m_hitBoxScale; // 0x88
     char pad0xAC[0x18];
-    Vec3 m_hitBoxPos; // 0x94
+    nw4r::math::VEC3 m_hitBoxPos; // 0x94
     char pad0xE8[0x30];
     u32 m_field112_0xE8; // 0xE8
     u32 m_field112_0xEC; // 0xEC

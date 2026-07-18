@@ -3,6 +3,9 @@
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
 #include <PiiProp.hpp>
 
+#define BITFLAG_SET(bitflag, mask) (bitflag |= mask)
+#define BITFLAG_CLEAR(bitflag, mask) (bitflag &= ~mask)
+
 namespace PiiSex {
 enum {
     Male = 0,
@@ -10,6 +13,15 @@ enum {
     Unknown = 2,
 };
 }
+
+enum PiiFlags {
+    BOSS_FLAG = 0x80000000,
+    FAVORITE_FLAG = 0x00000002,
+    RELEASE_FLAG = 0x00100000,
+    NEW_FLAG = 0x00040000,
+    UNK_FLAG1 = 0x00010000,
+    UNK_FLAG2 = 0x00020000,
+};
 
 class CPiiPersonalData : std::tr1::enable_shared_from_this<CPiiPersonalData> {
 public:

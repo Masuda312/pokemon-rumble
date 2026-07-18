@@ -13,7 +13,7 @@ void CGameSession::vfunc_800B8F20() {
         u8 formno = i->ppd->m_piiProp->formNo();
         CPiiCollectionBox* piiCollectionBox = m_piiCollectionBox.get();
         bool isShiny = i->ppd->isShiny();
-        piiCollectionBox->setCollectionState(dexno, formno, 3, isShiny);
+        piiCollectionBox->setCollectionType(dexno, formno, 3, isShiny);
     }
 }
 

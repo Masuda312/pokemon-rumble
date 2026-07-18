@@ -41,10 +41,15 @@ CGameStage.cpp:
 	extabindex  start:0x80048810 end:0x8004881C
 	.text       start:0x800BD1F0 end:0x800BD2E0
 
+CPiiBox.cpp:
+	extab       start:0x80023710 end:0x800237D8
+	extabindex  start:0x8004A0E8 end:0x8004A124
+	.text       start:0x800E0310 end:0x800E0780
+
 CPiiCollectionBox.cpp:
 	extab       start:0x80023AA8 end:0x80023AB0
 	extabindex  start:0x8004A19C end:0x8004A1A8
-	.text       start:0x800E1B50 end:0x800E1C20
+	.text       start:0x800E1B50 end:0x800E1CE0
 
 CPiiPersonalData.cpp:
 	extab       start:0x800250BC end:0x80025130

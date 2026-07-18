@@ -18,11 +18,11 @@ BWorldObj::BWorldObj(u32 group) {
     m_scale.z = 1.f;
 }
 
-void BWorldObj::setPosition(const Vec3& pos) {
+void BWorldObj::setPosition(const nw4r::math::VEC3& pos) {
     m_position = pos;
 }
 
-void BWorldObj::setScale(const Vec3& scale) {
+void BWorldObj::setScale(const nw4r::math::VEC3& scale) {
     m_scale = scale;
 }
 

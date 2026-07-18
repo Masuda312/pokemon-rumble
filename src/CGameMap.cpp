@@ -1,32 +1,8 @@
 #include <CGameMap.hpp>
-// extern std::tr1::shared_ptr<CUiBase> FUN_800AA730(std::tr1::weak_ptr<CUiBase>* arg);
+// extern std::tr1::shared_ptr<IDlg> FUN_800AA730(std::tr1::weak_ptr<IDlg>* arg);
 
 //CGameMap::CGameMap(const SomeStageResource& arg) : m_mapDesc(arg.mapDesc), m_ppuEnv(arg.ppuEnv) {
 //    // WIP
-//}
-
-//u8 CGameMap::FUN_800a7f70() {
-//    u32 *puVar1;
-//    int iVar2;
-//    int iVar3;
-//    undefined4 local_18 [4];
-//  
-//    puVar1 = getCurrentStageId();
-//    local_18[0] = *puVar1;
-//    iVar2 = FUN_80125180(local_18);
-//    if (iVar2 != 0) {
-//        iVar2 = 0;
-//        do {
-//            iVar3 = CDlgPiiSelector_vfunc_80094130(m_dlgPiiSelector, iVar2);
-//            if (iVar3 != 0) {
-//                return 1;
-//            }
-//
-//            iVar2 = iVar2 + 1;
-//        } while (iVar2 < 4);
-//    }
-//
-//    return m_hideUIFlag;
 //}
 
 MapDesc* CGameMap::getMapDesc() {
@@ -37,6 +13,10 @@ BWorld* getWorld(std::tr1::shared_ptr<BWorld> world) {
     return world.get();
 }
 
+std::tr1::shared_ptr<CDividedGround> getSharedDividedGround(const std::tr1::shared_ptr<CDividedGround>* dividedGround) {
+    return *dividedGround;
+}
+
 CShadowCamera* getShadowCamera(std::tr1::shared_ptr<CShadowCamera> shadowCamera) {
     return shadowCamera.get();
 }
@@ -45,28 +25,28 @@ CDividedGround* getDividedGround(std::tr1::shared_ptr<CDividedGround> dividedGro
     return dividedGround.get();
 }
 
-bool CGameMap::isUIOpen(std::tr1::shared_ptr<CUiBase>* sharedPtr) {
+bool CGameMap::tryOpenDlg(std::tr1::shared_ptr<IDlg>* sharedPtr) {
     if (!*sharedPtr) {
         return false;
     }
-    std::tr1::shared_ptr<CUiBase> temp = m_field19_0x1c.lock();
-    if (temp == *sharedPtr) {
+    std::tr1::shared_ptr<IDlg> current = m_currentDlg.lock();
+    if (current == *sharedPtr) {
         return true;
     }
-    if ((temp) && (!temp->vfunc18())) {
+    if ((current) && (!current->vfunc18())) {
         return false;
     }
 
-    temp.reset();
+    current.reset();
     
-    m_field19_0x1c = *sharedPtr;
+    m_currentDlg = *sharedPtr;
     return true;
 }
 
-void CGameMap::resetOpenUi_fn_800a9b60(std::tr1::shared_ptr<CUiBase>* sharedPtr) {
-    std::tr1::shared_ptr<CUiBase> temp = m_field19_0x1c.lock();
-    if (temp && temp == *sharedPtr) {
-        m_field19_0x1c.reset();
+void CGameMap::resetCurrentDlg(std::tr1::shared_ptr<IDlg>* sharedPtr) {
+    std::tr1::shared_ptr<IDlg> current = m_currentDlg.lock();
+    if (current && current == *sharedPtr) {
+        m_currentDlg.reset();
     }
 }
 
@@ -103,13 +83,13 @@ void CGameMap::setMovementLockTimer(s32 lockTimer) {
     m_movementLockTimer = *result;
 }
 
-void CGameMap::setHideUiFlag(u8 hideUiFlag) {
+void CGameMap::setHideUiFlag(bool hideUiFlag) {
     m_hideUIFlag = hideUiFlag;
 }
 
-CUiBase* CGameMap::getOpenUi() {
-    std::tr1::shared_ptr<CUiBase> temp(m_field19_0x1c.lock());
-    return temp.get();
+IDlg* CGameMap::getCurrentDlg() {
+    std::tr1::shared_ptr<IDlg> current(m_currentDlg.lock());
+    return current.get();
 }
 
 CPostEffect* CGameMap::getPostEffect() {
@@ -128,8 +108,8 @@ CMsgBalloon* CGameMap::getMsgBalloon() {
     return m_msgBalloon.get();
 }
 
-Unknown* CGameMap::getUnknownClass() {
-    return m_unknown.get();
+CTutorialMsg* CGameMap::getTutorialMsg() {
+    return m_tutorialMsg.get();
 }
 
 CPauseMenu* CGameMap::getPauseMenu() {

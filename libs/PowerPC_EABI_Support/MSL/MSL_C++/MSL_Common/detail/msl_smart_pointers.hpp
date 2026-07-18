@@ -1172,7 +1172,7 @@ template <class T> class shared_ptr {
 
     // observers
     element_type *get() const { return ptr_; }
-    typename add_reference<element_type>::type operator*() const {
+    typename Metrowerks::add_reference<element_type>::type operator*() const {
         return *ptr_;
     }
     element_type *operator->() const { return ptr_; }
@@ -1384,7 +1384,7 @@ template <class T> class shared_ptr<T[]> {
 
     // observers
     element_type *get() const { return ptr_; }
-    typename add_reference<element_type>::type operator[](size_t i) const {
+    typename Metrowerks::add_reference<element_type>::type operator[](size_t i) const {
         return ptr_[i];
     }
     long use_count() const {

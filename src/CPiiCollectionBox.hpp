@@ -1,5 +1,5 @@
 #include <types.h>
-// #include <vector>
+#include <vector>
 
 class CPiiCollectionBox {
 public:
@@ -8,20 +8,21 @@ public:
         s32 m_normalRank;
         s32 m_advancedRank;
         s32 m_exRank;
-        s32 m_defeated;
+        s32 m_defeatCount;
         s32 m_collectedNormal;
         s32 m_collectedShiny;
     };
     static_assert(sizeof(PiiCollectionEntries) == 0x1C);
 
 public:
-    PiiCollectionEntries* m_entries; // is a vector
-    u32 m_size;
-    u32 m_limit;
+    std::vector<PiiCollectionEntries> m_entries;
 
-    void setCollectionState(u32 dexNo, u32 formNo, s32 param_4, bool isShiny);
+    void setCollectionType(u32 dexNo, u32 formNo, s32 param_4, bool isShiny);
     s32 getCollectionType(u32 dexNo);
+    PiiCollectionEntries* getPiiCollectionEntries(u32 dexNo);
     s32 getCollectedNormal(u32 dexNo);
     s32 getCollectedShiny(u32 dexNo);
     void setCollectionBRR(u32 dexNo, s32 mode, s32 brRank);
+    s32 getCollectionBRR(u32 dexNo, s32 mode);
+    s32 getDefeatCount(u32 dexNo);
 };
