@@ -2,7 +2,17 @@
 #include <types.h>
 #include <CGameMap.hpp>
 
-class CGameStage {
+enum WarpModes {
+    WARP_MODE_NORMAL = 1,
+    WARP_MODE_RESULT_2 = 2,
+    WARP_MODE_RESULT_3 = 3,
+    WARP_MODE_RESULT_4 = 4,
+    WARP_MODE_RESULT_5 = 5,
+    WARP_MODE_RESULT_6 = 6,
+    WARP_MODE_RESULT_7 = 7,
+};
+
+class CGameStage : std::tr1::enable_shared_from_this<CGameStage> {
 public:
     virtual void vfunc_800BDB40();
     virtual void vfunc_800BD350();
@@ -13,14 +23,14 @@ public:
     virtual CGameMap* getGameMap();
     virtual u32 getLives();
     virtual void setLives(s32 lives);
-    virtual void changeStage(u32* stageIdPtr); // is changeStage or similar (puts 00010101 onto r0 which is the current area and progresses it to 00010102, 00010103, etc. when you change areas within the map)
-    virtual void setStageTransitionState(s32 transitionState);
+    virtual void setNextStage(u32* stageIdPtr);
+    virtual void setWarpMode(s32 transitionState);
     virtual void vfunc_800BD2E0();
     virtual void vfunc_800BD340();
 
-    char pad[0x14];
+    char pad[0x0C];
     u32 m_stageId;
     s32 m_lives;
-    std::tr1::shared_ptr<CGameMap> m_GameMapPtr;
-    u32 m_stageTransitionState;
+    std::tr1::shared_ptr<CGameMap> m_gameMap;
+    u32 m_warpMode;
 };

@@ -63,7 +63,7 @@ public:
     virtual void addBattleRoyalTimer(s32 deltaFrames);
     virtual void setBattleRoyalTimer(s32 battleRoyalTimer, s32 battleRoyalTimerSpeed);
     virtual void setMovementLockTimer(s32 lockTimer);
-    virtual void setHideUiFlag(bool hideUiFlag);
+    virtual void setHideUiFlag(bool shouldHideUI);
     virtual IDlg* getCurrentDlg();
     virtual CPostEffect* getPostEffect();
     virtual CNumericInput* getNumericInput();
@@ -89,7 +89,7 @@ public:
 
     MapDesc* m_mapDesc; // 0xC
     std::tr1::shared_ptr<CPpuEnv> m_ppuEnv; // 0x10
-    bool m_hideUIFlag; // ? 0x18
+    bool m_shouldHideUI; // ? 0x18
     std::tr1::weak_ptr<IDlg> m_currentDlg; // 0x1C
     s32 m_battleRoyalTimer; // 0x24
     s32 m_battleRoyalTimerSpeed; // 0x28

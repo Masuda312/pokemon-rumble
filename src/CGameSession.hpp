@@ -64,9 +64,10 @@ public:
     virtual CGameSessionSub28* getGameSessSub28();
     virtual std::tr1::shared_ptr<CPpuEnv> getPpuEnv();
     virtual void setScreenColor(s32 colorMode, s32 duration);
-    virtual u32 getScreenColorTimer();
-    virtual void vfunc_800B8F20();
+    virtual u32 getFadeTimer();
+    virtual void updatePiiCollectionBox();
     void updateScreenColor();
+    virtual void vfunc_800B9B30(u32 *stageId, u32 param_3, u32 warpMode);
 
     char pad_0x00[0x1C];
     s32 m_money;                                        // 0x20
@@ -80,11 +81,12 @@ public:
     std::tr1::shared_ptr<CPiiCollectionBox> m_piiCollectionBox;     // 0xF0
     std::tr1::shared_ptr<CBattleRoyalBox> m_battleRoyalBox;          // 0xF8
     std::tr1::shared_ptr<CStatistic> m_statistic;       // 0x100
-    char pad_0x104[0xB44];                              // 0x104 -> 0xC48
+    char pad_0x104[0xB40];                              // 0x104 -> 0xC48
+    u32 m_returnStageId;                                // 0xC48 not sure if it is for return but found no other use
     std::tr1::shared_ptr<CGameStage> m_gameStage;       // 0xC4C
-    u32 field_0xC54;                                    // 0xC54
-    u32 field_0xC58;                                    // 0xC58
+    u32 m_field_0xC54;                                    // 0xC54
+    u32 m_field_0xC58;                                    // 0xC58
     ScreenColor m_screenColor;                          // 0xC5C
     ScreenColor m_screenColorTarget;                    // 0xC60
-    u32 m_screenColorTimer;                             // 0xC64
+    u32 m_fadeTimer;                                    // 0xC64
 };

@@ -4,7 +4,7 @@ extern s32 maxMoney;
 extern const double lbl_804B9EE0;
 void fn_80113760(void* field_0x100, s32 arg1, s32 arg2);
 
-void CGameSession::vfunc_800B8F20() {
+void CGameSession::updatePiiCollectionBox() {
     CPiiBox* piiBox = m_piiBox.get();
     CPiiBox::PiiBoxNode* tail = (CPiiBox::PiiBoxNode*)&piiBox->m_piiBoxTail;
 
@@ -107,42 +107,42 @@ std::tr1::shared_ptr<CPpuEnv> CGameSession::getPpuEnv() {
 }
 
 void CGameSession::setScreenColor(s32 colorMode,s32 duration) {
-  if (duration < 0) {
-      m_screenColorTimer = 0xf;
-  } else {
-      m_screenColorTimer = duration;
-  }
+    if (duration < 0) {
+        m_fadeTimer = 0xf;
+    } else {
+        m_fadeTimer = duration;
+    }
   
-  switch (colorMode) {
-      default:
-          m_screenColorTarget.r = 0x0;
-          m_screenColorTarget.g = 0x0;
-          m_screenColorTarget.b = 0x0;
-          m_screenColorTarget.a = 0x0;
-          break;
-      case 1:
-          m_screenColorTarget.r = 0xff;
-          m_screenColorTarget.g = 0xff;
-          m_screenColorTarget.b = 0xff;
-          m_screenColorTarget.a = 0xff;
-          break;
-      case 2:
-          m_screenColorTarget.r = 0xff;
-          m_screenColorTarget.g = 0xff;
-          m_screenColorTarget.b = 0xff;
-          m_screenColorTarget.a = 0xff;
-          break;
-  }
+    switch (colorMode) {
+        default:
+            m_screenColorTarget.r = 0x0;
+            m_screenColorTarget.g = 0x0;
+            m_screenColorTarget.b = 0x0;
+            m_screenColorTarget.a = 0x0;
+            break;
+        case 1:
+            m_screenColorTarget.r = 0xff;
+            m_screenColorTarget.g = 0xff;
+            m_screenColorTarget.b = 0xff;
+            m_screenColorTarget.a = 0xff;
+            break;
+        case 2:
+            m_screenColorTarget.r = 0xff;
+            m_screenColorTarget.g = 0xff;
+            m_screenColorTarget.b = 0xff;
+            m_screenColorTarget.a = 0xff;
+            break;
+    }
 
-  if (m_screenColorTimer == 0) {
-    m_screenColor = m_screenColorTarget;
-  } else if (m_screenColor.a == 0) {
-    m_screenColor.r = m_screenColorTarget.r;
-    m_screenColor.g = m_screenColorTarget.g;
-    m_screenColor.b = m_screenColorTarget.b;
-  }
+    if (m_fadeTimer == 0) {
+        m_screenColor = m_screenColorTarget;
+    } else if (m_screenColor.a == 0) {
+        m_screenColor.r = m_screenColorTarget.r;
+        m_screenColor.g = m_screenColorTarget.g;
+        m_screenColor.b = m_screenColorTarget.b;
+    }
 }
 
-u32 CGameSession::getScreenColorTimer() {
-    return m_screenColorTimer;
+u32 CGameSession::getFadeTimer() {
+    return m_fadeTimer;
 }

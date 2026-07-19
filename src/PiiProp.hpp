@@ -2,7 +2,7 @@
 
 #include <types.h>
 
-enum type_efficacy {
+enum TypeEfficacy {
     TYPE_NO_EFFECT = 0,
     TYPE_UNKNOWN = 1,
     TYPE_NOT_VERY_EFFECTIVE = 2,

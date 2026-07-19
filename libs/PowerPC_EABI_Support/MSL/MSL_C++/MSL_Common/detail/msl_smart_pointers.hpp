@@ -1741,42 +1741,22 @@ template <class T> inline void weak_ptr<T>::swap(weak_ptr &r) {
 template <class T> void weak_ptr<T>::reset() { weak_ptr().swap(*this); }
 
 template <class T> shared_ptr<T> weak_ptr<T>::lock() const {
-#ifdef _MSL_SHARED_PTR_HAS_MUTEX
-    if (s_ == 0)
+    bool expired = true;
+    if (s_ != 0 && s_->use_count_ != 0) {
+        expired = false;
+    }
+    if (expired) {
         return shared_ptr<T>();
+    }
     shared_ptr<T> r;
-#ifndef __POWERPC__
-    {
-        Metrowerks::mutex::scoped_lock lock(s_->mut_);
-        if (s_->use_count() != 0) {
-            r.ptr_ = ptr_;
-            r.s_ = s_;
-            r.s_->attach(false);
-        }
-    }
-#else  // __POWERPC__
-    register ptrdiff_t *const p = &s_->use_count_;
-    register ptrdiff_t a;
-    asm
-    {
-	loop:
-		lwarx    a, 0, p
-    }
-    if (a != 0) {
-        asm
-            {
-			addi     a, a, 1
-			stwcx.   a, 0, p
-			bne-     loop
-            }
+
+    if (s_->use_count() != 0) {
         r.ptr_ = ptr_;
         r.s_ = s_;
+        r.s_->attach();
     }
-#endif // __POWERPC__
+
     return r;
-#else // _MSL_SHARED_PTR_HAS_MUTEX
-    return expired() ? shared_ptr<T>() : shared_ptr<T>(*this);
-#endif
 }
 
 template <class T>

@@ -83,8 +83,8 @@ void CGameMap::setMovementLockTimer(s32 lockTimer) {
     m_movementLockTimer = *result;
 }
 
-void CGameMap::setHideUiFlag(bool hideUiFlag) {
-    m_hideUIFlag = hideUiFlag;
+void CGameMap::setHideUiFlag(bool shouldHideUI) {
+    m_shouldHideUI = shouldHideUI;
 }
 
 IDlg* CGameMap::getCurrentDlg() {
