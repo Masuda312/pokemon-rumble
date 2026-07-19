@@ -29,7 +29,7 @@ class CTutorialMsg;
 class CMsgBalloon;
 class CEnemyInfo;
 class CNumericInput;
-class IDlg { // placeholder for matching, it must be something that CDlgPiiSelector, CDlgMsgWin, and CDlgCollection inherit from
+class IDlg {
 public:
     virtual u32 vfunc0();
     virtual u32 vfunc4();

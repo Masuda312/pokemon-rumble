@@ -338,7 +338,7 @@ config.libs = [
         "cflags": cflags_runtime,
         "progress_category": "sdk",
         "objects": [
-            # Object(NonMatching, "__mem.c"),
+            Object(NonMatching, "Runtime/__mem.c"),
             Object(NonMatching, "Runtime/__va_arg.c"),
             Object(NonMatching, "Runtime/global_destructor_chain.c"),
             Object(NonMatching, "Runtime/New.cpp", extra_cflags = ["-Cpp_exceptions on", "-RTTI on"]),
