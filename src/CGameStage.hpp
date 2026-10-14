@@ -1,6 +1,9 @@
+#pragma once
+
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
 #include <types.h>
-#include <CGameMap.hpp>
+
+class CGameMap;
 
 enum WarpModes {
     WARP_MODE_NORMAL = 1,

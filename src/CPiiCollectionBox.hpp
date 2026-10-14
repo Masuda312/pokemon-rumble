@@ -1,23 +1,31 @@
+#pragma once
+
 #include <types.h>
 #include <vector>
 
 class CPiiCollectionBox {
 public:
+    enum CollectionTypes {
+        UNKNOWN,
+        DEFEATED,
+        GOT,
+    };
     struct PiiCollectionEntries {
-        s32 m_collectionType;
-        s32 m_normalRank;
-        s32 m_advancedRank;
-        s32 m_exRank;
-        s32 m_defeatCount;
-        s32 m_collectedNormal;
-        s32 m_collectedShiny;
+        s32 collectionType;
+        s32 normalRank;
+        s32 advancedRank;
+        s32 exRank;
+        s32 defeatCount;
+        s32 collectedNormal;
+        s32 collectedShiny;
     };
     static_assert(sizeof(PiiCollectionEntries) == 0x1C);
 
 public:
     std::vector<PiiCollectionEntries> m_entries;
+    std::vector<PiiCollectionEntries> m_savedEntries;
 
-    void setCollectionType(u32 dexNo, u32 formNo, s32 param_4, bool isShiny);
+    void setCollectionType(s32 dexNo, s32 formNo, s32 collectionState, bool isShiny);
     s32 getCollectionType(u32 dexNo);
     PiiCollectionEntries* getPiiCollectionEntries(u32 dexNo);
     s32 getCollectedNormal(u32 dexNo);

@@ -2,8 +2,7 @@
 std::tr1::shared_ptr<s32>& fn_801119B0(std::tr1::shared_ptr<s32>&);
 
 BWorldObj::BWorldObj(u32 group) {
-    const u32 grp = group | 1;
-    m_group = grp;
+    m_group = group | 1;
     m_world = 0;
     m_field0x18 = 0;
     m_objectActiveFlag = 4;

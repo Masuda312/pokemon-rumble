@@ -29,7 +29,7 @@ void CEngine::setupMemory(CPpuCode &ppuCode, CPpuEnv &ppuEnv, s32 size1,
     this->ppuCode->CPpuCode_vfunc_80105250();
     this->ppuCode = &ppuCode;
     this->ppuEnv = &ppuEnv;
-    this->ppuEnv->CPpuEnv_vfunc_shared_ptr_801054D0();
+    this->ppuEnv->acquire();
     this->size1 = size1;
     this->size2 = size2;
     this->size3 = size3;

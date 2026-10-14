@@ -165,5 +165,5 @@ CWorldObjStatDisplay* CGameMap::getWorldStatDisplay() {
 }
 
 BWorld* CGameMap::getWorld() {
-    return m_bWorld.get();
+    return m_world.get();
 }

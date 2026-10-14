@@ -1,8 +1,45 @@
 #include "CGameSession.hpp"
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
-extern s32 maxMoney;
+static s32 maxMoney = 9999999;
 extern const double lbl_804B9EE0;
-void fn_80113760(void* field_0x100, s32 arg1, s32 arg2);
+
+CPiiCollectionBox* CGameSession::getPiiCollectionBox() {
+    return m_piiCollectionBox.get();
+}
+
+CBattleRoyalBox* CGameSession::getBattleRoyalBox() {
+    return m_battleRoyalBox.get();
+}
+
+CStatistic* CGameSession::getStatistic() {
+    return m_statistic.get();
+}
+
+u32 CGameSession::vfunc_800B8230(u16 dexNo) {
+    s32 iVar2 = m_piiCollectionBox->getCollectionType(dexNo);
+    if (iVar2 == 3) {
+        return 3;
+    }
+    else {
+        for (s32 i = 0; i < 4; i++) {
+            std::tr1::shared_ptr<CPlayer> player = m_players[i];
+
+            if (!player->m_playerSub10.m_active) {
+                continue;
+            }
+
+            CPiiBox::PiiBoxNode* tail = (CPiiBox::PiiBoxNode*)&player->m_playerSub10.m_piiBox.m_piiBoxTail;
+
+            for (CPiiBox::PiiBoxNode* node = player->m_playerSub10.m_piiBox.m_piiBoxHead; node != tail; node = node->next) {
+                if (dexNo == node->ppd->m_piiProp->monsNo()) {
+                    return 3;
+                }
+            }
+        }
+    }
+
+    return iVar2;
+}
 
 void CGameSession::updatePiiCollectionBox() {
     CPiiBox* piiBox = m_piiBox.get();
@@ -27,35 +64,34 @@ void CGameSession::setMoney(s32 amount) {
     if (maxMoney < amount) {
         m_value = &maxMoney;
     }
+    
     m_money = *m_value;
 }
 
 void CGameSession::addMoney(s32 amount) {
     s32 maxInt = 0x7fffffff;
-    s32 newMoney = maxInt;
     s32 currentMoney = m_money;
+    s32 newMoney;
 
     if (amount > 0) {
-        s32 sum = currentMoney + amount;
-      
-        if (currentMoney < sum) {
+        newMoney = currentMoney + amount;
+
+        if (currentMoney >= newMoney) {
             newMoney = maxInt;
-        } else {
-            newMoney = sum;
         }
     } else if (amount < 0) {
-        s32 sum = currentMoney + amount;
+        newMoney = currentMoney + amount;
 
-        if (currentMoney > sum) {
-            s32* result = &newMoney;
-          
+        if (currentMoney > newMoney) {
+            s32 sum = newMoney;
+            s32* result = &sum;
+
             if (sum < maxInt) {
-                result = &newMoney + 1;
+                result = &maxInt;
             }
 
             newMoney = *result;
-        }
-        else {
+        } else {
             newMoney = 9999999;
         }
     } else {
@@ -64,18 +100,19 @@ void CGameSession::addMoney(s32 amount) {
 
     setMoney(newMoney);
     if (amount > 0) {
-        fn_80113760(m_statistic.get(), -0x62, amount);
+        m_statistic->addStatValue(CStatistic::STAT_TOTAL_MONEY_EARNED, amount);
     }
 }
 
+// maybe isPlayerBoxFull instead?
 bool CGameSession::isPiiBoxFull() {
     u32 total = m_piiBox->m_size;
 
     for (s32 i = 0; i < 4; i++) {
         CPlayer* player = getPlayer(i);
 
-        if (player->m_activeFlag != 0) { 
-            total += player->m_collectedPiiCount;
+        if (player->m_playerSub10.m_active != false) { 
+            total += player->m_playerSub10.m_piiBox.m_size;
         }
     }
 
@@ -91,18 +128,18 @@ CPiiBox* CGameSession::getPiiBox() {
 }
 
 CPlayer* CGameSession::getPlayer(u32 index) { 
-    return m_players[index].player.get(); 
+    return m_players[index].get(); 
 }
 
 CRemoteMemory* CGameSession::getRemoteMemory(u32 index) { 
-    return m_remoteMemory[index].remoteMemory.get(); 
+    return m_remoteMemory[index].get(); 
 }
 
 CGameSessionSub28* CGameSession::getGameSessSub28() {
     return &m_sub28;
 }
 
-std::tr1::shared_ptr<CPpuEnv> CGameSession::getPpuEnv() {
+std::tr1::shared_ptr<CPpuEnv> CGameSession::getPpuEnv() const {
     return m_ppuEnv;
 }
 

@@ -12,7 +12,7 @@ extern "C" {
 int printf(const char *RESTRICT format, ...);
 int fprintf(FILE *RESTRICT stream, const char *RESTRICT format, ...);
 int sprintf(char *RESTRICT buffer, const char *RESTRICT format, ...);
-int snprintf(char *RESTRICT buffer, size_t bufsz, const char *RESTRICT format, ...);
+int snprintf(wchar_t *RESTRICT buffer, size_t bufsz, const wchar_t *RESTRICT format, ...);
 
 int vprintf(const char *RESTRICT format, va_list vlist);
 int vfprintf(FILE *RESTRICT stream, const char *RESTRICT format, va_list vlist);

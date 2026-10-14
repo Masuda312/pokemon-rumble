@@ -1,28 +1,23 @@
+#pragma once
+
 #include <types.h>
+#include <vector>
 #include <ppu/CPpuEnv.hpp>
 #include <CGameStage.hpp>
 #include <CPlayer.hpp>
 #include <CPiiBox.hpp>
 #include <CPiiCollectionBox.hpp>
 #include <CPiiPersonalData.hpp>
+#include <CStatistic.hpp>
 
 class CRemoteMemory; 
 class CBattleRoyalBox;
-class CStatistic;
 
 struct ScreenColor {
     u8 r;
     u8 g;
     u8 b;
     u8 a;
-};
-
-struct PlayerSlot {
-    std::tr1::shared_ptr<CPlayer> player;
-};
-
-struct RemoteSlot {
-    std::tr1::shared_ptr<CRemoteMemory> remoteMemory;
 };
     
 class CGameSessionSub28 {
@@ -44,10 +39,10 @@ public:
     virtual void vfunc_800B7AA0();
     virtual void vfunc_800B81E0();
     virtual void vfunc_800B81F0();
-    virtual void vfunc_800B8200();
-    virtual void vfunc_800B8230();
-    virtual void vfunc_800B8210();
-    virtual void vfunc_800B8220();
+    virtual CPiiCollectionBox* getPiiCollectionBox();
+    virtual u32 vfunc_800B8230(u16 dexNo);
+    virtual CBattleRoyalBox* getBattleRoyalBox();
+    virtual CStatistic* getStatistic();
     virtual void vfunc_800B8390();
     virtual void vfunc_800B84C0();
     virtual void vfunc_800B8500();
@@ -62,7 +57,7 @@ public:
     virtual CPlayer* getPlayer(u32 index);
     virtual CRemoteMemory* getRemoteMemory(u32 index);
     virtual CGameSessionSub28* getGameSessSub28();
-    virtual std::tr1::shared_ptr<CPpuEnv> getPpuEnv();
+    virtual std::tr1::shared_ptr<CPpuEnv> getPpuEnv() const;
     virtual void setScreenColor(s32 colorMode, s32 duration);
     virtual u32 getFadeTimer();
     virtual void updatePiiCollectionBox();
@@ -74,8 +69,8 @@ public:
     s32 smthSavedMoney;                                 // 0x24
     CGameSessionSub28 m_sub28;                          // 0x28 -> 0x3C 
     std::tr1::shared_ptr<CPiiBox> m_piiBox;             // 0x3C
-    PlayerSlot m_players[4];                            // 0x44 -> 0x60 
-    RemoteSlot m_remoteMemory[4];                        // 0x64 -> 0x80
+    std::tr1::shared_ptr<CPlayer> m_players[4];         // 0x44 -> 0x60 
+    std::tr1::shared_ptr<CRemoteMemory> m_remoteMemory[4];      // 0x64 -> 0x80
     std::tr1::shared_ptr<CPpuEnv> m_ppuEnv;             // 0x84     
     char pad_0x40[0x64];                                // 0x84 -> 0xF0
     std::tr1::shared_ptr<CPiiCollectionBox> m_piiCollectionBox;     // 0xF0
@@ -84,8 +79,8 @@ public:
     char pad_0x104[0xB40];                              // 0x104 -> 0xC48
     u32 m_returnStageId;                                // 0xC48 not sure if it is for return but found no other use
     std::tr1::shared_ptr<CGameStage> m_gameStage;       // 0xC4C
-    u32 m_field_0xC54;                                    // 0xC54
-    u32 m_field_0xC58;                                    // 0xC58
+    u32 m_field_0xC54;                                  // 0xC54
+    u32 m_field_0xC58;                                  // 0xC58
     ScreenColor m_screenColor;                          // 0xC5C
     ScreenColor m_screenColorTarget;                    // 0xC60
     u32 m_fadeTimer;                                    // 0xC64

@@ -2,6 +2,7 @@
 
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
 #include <PiiProp.hpp>
+#include <SD_PiiPersonalData.hpp>
 
 #define BITFLAG_SET(bitflag, mask) (bitflag |= mask)
 #define BITFLAG_CLEAR(bitflag, mask) (bitflag &= ~mask)
@@ -23,21 +24,21 @@ enum PiiFlags {
     UNK_FLAG2 = 0x00020000,
 };
 
-class CPiiPersonalData : std::tr1::enable_shared_from_this<CPiiPersonalData> {
+class CPiiPersonalData : public std::tr1::enable_shared_from_this<CPiiPersonalData> {
 public:
     u32 m_flags;
     u32 m_unkownCounter;
-    PiiProp *m_piiProp;
+    const PiiProp *m_piiProp;
     u32 m_sex;
     /// in the code these are called `waza`
     s32 m_moveIds[2];
     u32 m_level;
-    u32 m_bonusMaxHP;
-    u32 m_bonusAttackPower;
-    u32 m_bonusDefencePower;
-    u32 m_bonusSpeed;
+    s32 m_bonusMaxHP;
+    s32 m_bonusAttackPower;
+    s32 m_bonusDefencePower;
+    s32 m_bonusSpeed;
     /// in the code this is called a `prefix`
-    u32 m_trait;
+    s32 m_trait;
     /// in the code this is called `rand` (because it is randomly generated)
     u32 m_piiId;
     u32 m_field14_0x3c;
@@ -57,7 +58,7 @@ public:
     u32 m_price;
     u32 m_groupNo;
 
-    CPiiPersonalData(u32 counter, u32 trainerId, PiiProp &ppr, s32 sex);
+    CPiiPersonalData(u32 counter, u32 trainerId, const PiiProp &ppr, s32 sex);
     u32 getPiiStatus();
     void setTrainerId(u32 trainerId);
     void setId(u32 piiId);
@@ -79,18 +80,19 @@ public:
     void setLevel(u32 level);
     void setCappedLevel(u32 cappedLevel);
     void setAttackPower(u32 attackPower);
-    void setBonusAttackPower(u32 bonusAttackPower);
+    void setBonusAttackPower(s32 bonusAttackPower);
     void setDefencePower(u32 defencePower);
-    void setBonusDefencePower(u32 bonusDefencePower);
+    void setBonusDefencePower(s32 bonusDefencePower);
     void setSpeed(u32 speed);
-    void setBonusSpeed(u32 bonusSpeed);
+    void setBonusSpeed(s32 bonusSpeed);
     void setBattlePower(u32 battlePower);
     void setGroupNo(u32 groupNo);
-    void setTrait(u32 trait);
-    u16* getTraitName();
+    void setTrait(s32 trait);
+    const wchar_t* getTraitName();
     void setBossFlag(bool enable);
     void setFavoriteFlag(bool enable);
     void setReleaseFlag(bool enable);
     void setPrice(u32 price);
+    void ppdToSD(SD_PpdData* ppdSaveData);
 };
 static_assert(sizeof(CPiiPersonalData) == 0x80);

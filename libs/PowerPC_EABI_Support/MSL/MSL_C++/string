@@ -72,6 +72,12 @@ namespace std {
         // hack
         friend void ec::FORCEFUNC_string_get_pointer();
 
+        template <class CharT, class Traits, class Allocator>
+        friend basic_string<CharT, Traits, Allocator> operator+(const basic_string<CharT, Traits, Allocator> &lhs, const CharT *rhs);
+
+        template <class CharT, class Traits, class Allocator>
+        friend basic_string<CharT, Traits, Allocator> operator+(const basic_string<CharT, Traits, Allocator> &lhs, CharT rhs);
+
     private:
         struct __longbuf {
             size_t capacity;
@@ -80,8 +86,13 @@ namespace std {
         };
 
         struct __shortbuf {
-            CharT length;
-            CharT buffer[sizeof(__longbuf) - sizeof(CharT)];
+            unsigned char length;
+            CharT buffer[(sizeof(__longbuf) - sizeof(unsigned char)) / sizeof(CharT)];
+        };
+
+        struct __shortlen {
+            unsigned char flag : 1;
+            unsigned char len  : 7;
         };
 
         union rep_s {
@@ -89,7 +100,7 @@ namespace std {
             __longbuf longBuf;
             __shortbuf shortBuf;
 
-            bool is_short() const { return !(shortFlag >> 31); }
+            bool is_short() const { return (shortFlag >> 31) == 0; }
         };
 
         CharT *get_pointer() {
@@ -136,16 +147,17 @@ namespace std {
             rep_s *buf = &m.first();
             // string buffer size must be word-aligned
             static_assert(sizeof(*buf) % sizeof(size_t) == 0);
-            for (size_t i = sizeof(*buf) / sizeof(size_t); i != 0; i--) {
-                ((size_t *)&buf)[i] = 0;
+            for (size_t i = 0; i < sizeof(*buf) / sizeof(size_t); i++) {
+                ((size_t *)buf)[i] = 0;
             }
         }
 
     public:
-        basic_string() { zero(); }
+        basic_string() : m() { zero(); }
         basic_string(const Allocator &alloc) : m(alloc) { zero(); }
 
         basic_string(const basic_string &other) : m(other.m.second()) {
+            random_access_iterator_tag tag;
             const rep_s &other_rep = other.m.first();
             if (other_rep.is_short()) {
                 m.first() = other_rep;
@@ -154,9 +166,7 @@ namespace std {
 
                 const __longbuf &buf = other_rep.longBuf;
                 reserve(buf.length);
-                do_replace(
-                    0, 0, buf.buffer, buf.buffer + buf.length, random_access_iterator_tag()
-                );
+                do_replace(0, 0, buf.buffer, buf.buffer + buf.length, tag);
             }
         }
 
@@ -184,8 +194,32 @@ namespace std {
 
         const value_type* c_str() const {return get_pointer();}
 
-        DONT_INLINE_CLASS iterator begin() { return get_pointer(); }
-        DONT_INLINE_CLASS const_iterator begin() const { return get_pointer(); }
+        reference at(size_type n) {
+            rep_s &rep = m.first();
+
+            return (u32)__cntlzw(rep.shortFlag >> 31) >> 5 ? rep.shortBuf.buffer[n] : rep.longBuf.buffer[n];
+        }
+
+        const_reference at(size_type n) const {
+            const rep_s &rep = m.first();
+
+            return rep.is_short() ? rep.shortBuf.buffer[n] : rep.longBuf.buffer[n].
+        }
+
+        reference operator[](size_type n) { 
+            rep_s &rep = m.first();
+          
+            return rep.is_short() ? rep.shortBuf.buffer[n] : rep.longBuf.buffer[n];
+        }
+
+        const_reference operator[](size_type n) const {
+            const rep_s &rep = m.first();
+
+            return rep.is_short() ? rep.shortBuf.buffer[n] : rep.longBuf.buffer[n]
+        }
+
+        iterator begin() { return get_pointer(); }
+        const_iterator begin() const { return get_pointer(); }
 
         DONT_INLINE_CLASS iterator end() {
             CharT *ptr;
@@ -203,7 +237,7 @@ namespace std {
 
         size_t size() const {
             const rep_s &rep = m.first();
-            return rep.is_short() ? rep.shortBuf.length : rep.longBuf.length;
+            return rep.is_short() ? rep.shortBuf.length & 0x7F : rep.longBuf.length;
         }
 
         void clear() {
@@ -250,12 +284,46 @@ namespace std {
 
         DONT_INLINE_CLASS void reserve(size_t size) {}
 
-        DONT_INLINE_CLASS void operator=(const CharT *str) {
-            // required to be here to match; probably an inline missing
-            random_access_iterator_tag tag;
+        // there to match the preservation for short/long selection across towupper() for the formatDate() function 
+        void uppercase_at(size_type n) {
+            rep_s &rep = m.first();
+            u32 isShort = (u32)__cntlzw(rep.shortFlag >> 31) >> 5;
 
+            CharT* ptr = isShort ? rep.shortBuf.buffer : rep.longBuf.buffer;
+            CharT ch = towupper(ptr[n]);
+
+            ptr = isShort ? rep.shortBuf.buffer : rep.longBuf.buffer;
+            ptr[n] = ch;
+        }
+
+        void operator=(const CharT *str) {
             size_t cur_size = size();
-            do_replace(0, cur_size, str, str + Traits::length(str), tag);
+            do_replace(0, cur_size, str, str + Traits::length(str), random_access_iterator_tag());
+        }
+
+        void operator=(const basic_string& rhs) {
+            rep_s& dst = m.first();
+            const rep_s& src = rhs.m.first();
+
+            if (dst.is_short() && src.is_short()) {
+                dst = src;
+                return;
+            }
+
+            // reversing it to check if it's false seems to produce the right assembly
+            size_t dstSize = !dst.is_short() ? dst.longBuf.length : dst.shortBuf.length & 0x7F;
+
+            const CharT* srcPtr;
+            size_t srcSize;
+            if (src.is_short()) {
+                srcPtr = src.shortBuf.buffer;
+                srcSize = src.shortBuf.length & 0x7F;
+            } else {
+                srcPtr = src.longBuf.buffer;
+                srcSize = src.longBuf.length;
+            }
+
+            do_replace(0, dstSize, srcPtr, srcPtr + srcSize, random_access_iterator_tag());
         }
 
         DONT_INLINE_CLASS void operator+=(const basic_string &str) { append(str); }
@@ -263,7 +331,7 @@ namespace std {
         DONT_INLINE_CLASS void operator+=(CharT c) { append(c); }
 
     private:
-        void do_replace(
+        DONT_INLINE_CLASS void do_replace(
             size_t cur_size,
             size_t append_size,
             const CharT *start,
@@ -381,11 +449,72 @@ namespace std {
 
     template <class CharT, class Traits, class Allocator>
     basic_string<CharT, Traits, Allocator>
-    operator+(const basic_string<CharT, Traits, Allocator> &lhs, const CharT *rhs);
+    operator+(const basic_string<CharT, Traits, Allocator> &lhs, const CharT *rhs) {
+        basic_string<CharT, Traits, Allocator> result;
+
+        size_t rhsLength = Traits::length(rhs);
+        const typename basic_string<CharT, Traits, Allocator>::rep_s& rep = lhs.m.first();
+
+        size_t lhsLength;
+        const CharT* lhsPtr;
+
+        if (rep.is_short()) {
+            lhsPtr = rep.shortBuf.buffer;
+            lhsLength = rep.shortBuf.length & 0x7F;
+        } else {
+            lhsPtr = rep.longBuf.buffer;
+            lhsLength = rep.longBuf.length;
+        }
+
+        result.reserve(lhsLength + rhsLength);
+
+        const CharT* lhsEnd = lhsPtr + lhsLength;
+        result.do_replace(0, 0, lhsPtr, lhsEnd, random_access_iterator_tag());
+        result.do_replace(lhsLength, 0, rhs, rhs + rhsLength, random_access_iterator_tag());
+
+        return result;
+    }
 
     template <class CharT, class Traits, class Allocator>
     basic_string<CharT, Traits, Allocator>
-    operator+(const basic_string<CharT, Traits, Allocator> &lhs, CharT rhs);
+    operator+(const basic_string<CharT, Traits, Allocator> &lhs, CharT rhs) {
+        // also required to match
+        random_access_iterator_tag tag;
+
+        typedef basic_string<CharT, Traits, Allocator> str_t;
+
+        str_t result;
+
+        typename str_t::rep_s& rep = result.m.first();
+
+        CharT *p;
+        if (!rep.is_short()) {
+            rep.longBuf.length = 1;
+            p = rep.longBuf.buffer;
+        } else {
+            ((typename str_t::__shortlen *)&rep.shortBuf.length)->len = 1;
+            p = rep.shortBuf.buffer;
+        }
+
+        p[0] = rhs;
+        p[1] = CharT();
+
+        const typename str_t::rep_s& srcRep = lhs.m.first();
+
+        const CharT* start;
+        size_t length;
+            
+        if (srcRep.is_short()) {
+            start = srcRep.shortBuf.buffer;
+            length = srcRep.shortBuf.length & 0x7F;
+        } else {
+            start = srcRep.longBuf.buffer;
+            length = srcRep.longBuf.length;
+        }
+
+        result.do_replace(0, 0, start, start + length, tag);
+        return result;
+    }
 
     template <class CharT, class Traits, class Allocator>
     bool operator==(

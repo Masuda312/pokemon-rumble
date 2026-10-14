@@ -1,9 +1,12 @@
+#pragma once
+
 #include <types.h>
 #include <nw4r/math.h>
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
-#include <BWorld.hpp>
 
-class BWorldObj : std::tr1::enable_shared_from_this<BWorldObj> {
+class BWorld;
+
+class BWorldObj : public std::tr1::enable_shared_from_this<BWorldObj> {
 public:
     virtual ~BWorldObj();
     virtual void setPosition(const nw4r::math::VEC3& pos);
@@ -17,9 +20,9 @@ public:
     
     BWorldObj(u32 group);
 
-    u32 m_objectActiveFlag; // 0x0C
+    u32 m_objectActiveFlag; // 0x0C ? 
     u32 m_group; // 0x10
-    BWorld* m_world; // 0x14 BWorld pointer
+    BWorld* m_world; // 0x14
     u32 m_field0x18; // 0x18
     std::tr1::weak_ptr<BWorldObj> m_parentObj; // 0x1C
     std::tr1::shared_ptr<s32> m_unknown; // 0x24

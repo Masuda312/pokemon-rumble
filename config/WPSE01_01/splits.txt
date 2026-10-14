@@ -18,6 +18,9 @@ BModelObj.cpp:
 	extabindex  start:0x8004422C end:0x80044394
 	.text       start:0x800528E0 end:0x800584D0
 
+BWorld.cpp:
+	.text       start:0x8005F750 end:0x8005F790
+
 BWorldObj.cpp:
 	extab       start:0x8000A194 end:0x8000A754
 	extabindex  start:0x80044BA4 end:0x80044D24
@@ -42,9 +45,9 @@ CGameStage.cpp:
 	.text       start:0x800BD1F0 end:0x800BD2E0
 
 CPiiBox.cpp:
-	extab       start:0x80023710 end:0x800237D8
-	extabindex  start:0x8004A0E8 end:0x8004A124
-	.text       start:0x800E0310 end:0x800E0780
+	extab       start:0x800236E8 end:0x800237D8
+	extabindex  start:0x8004A0DC end:0x8004A124
+	.text       start:0x800E0200 end:0x800E0780
 
 CPiiCollectionBox.cpp:
 	extab       start:0x80023AA8 end:0x80023AB0
@@ -52,15 +55,20 @@ CPiiCollectionBox.cpp:
 	.text       start:0x800E1B50 end:0x800E1CE0
 
 CPiiPersonalData.cpp:
-	extab       start:0x800250BC end:0x80025130
-	extabindex  start:0x8004A4CC end:0x8004A520
-	.text       start:0x800EC3D0 end:0x800ECAF0
+	extab       start:0x800250BC end:0x80025194
+	extabindex  start:0x8004A4CC end:0x8004A538
+	.text       start:0x800EC3D0 end:0x800ECE50
 
 ppu/CPpuEngine.cpp:
 	extab       start:0x80026DBC end:0x80027C68
 	extabindex  start:0x8004B18C end:0x8004B3A8
 	.text       start:0x800FE5B0 end:0x80103640
 	.ctors      start:0x803529DC end:0x803529E0
+
+CStatistic.cpp:
+	extab       start:0x800295E8 end:0x80029730
+	extabindex  start:0x8004BF0C end:0x8004BF54
+	.text       start:0x80112EF0 end:0x80114120
 
 PiiProp.cpp:
 	extab       start:0x8002C230 end:0x8002C270
@@ -69,6 +77,11 @@ PiiProp.cpp:
 	.rodata     start:0x8035DF88 end:0x803620C0
 	.data       start:0x803B8730 end:0x803B9D88
 	.sdata      start:0x804B7B78 end:0x804B80E0
+
+ppu/CPpuCode.cpp:
+	extab       start:0x80034D94 end:0x80034DA4
+	extabindex  start:0x8004FDC4 end:0x8004FDDC
+	.text       start:0x8016FC10 end:0x8016FEB0
 
 ppu/CEngine.cpp:
 	extab       start:0x80034DD4 end:0x80034E3C
@@ -79,6 +92,17 @@ BSoundSource.cpp:
 	extab       start:0x800432A4 end:0x80043340
 	extabindex  start:0x800520E0 end:0x800520F8
 	.text       start:0x801E8740 end:0x801E88B0
+
+CMsgRes.cpp:
+	extab       start:0x800434B8 end:0x800434E0
+	extabindex  start:0x8005223C end:0x80052278
+	.text       start:0x801EE470 end:0x801EEAC0
+
+MsgRes.cpp:
+	extab       start:0x80043500 end:0x80043768
+	extabindex  start:0x800522A8 end:0x80052344
+	.text       start:0x801EF6F0 end:0x801F11C0
+	.ctors      start:0x80352A34 end:0x80352A38
 
 nw4r/g3d/res/g3d_rescommon.cpp:
 	.text       start:0x8024AE80 end:0x8024B030

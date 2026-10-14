@@ -77,9 +77,9 @@ public:
     // const char *name_female() const;
     f32 walkSpeedCoeff() const;
     f32 walkAnmRate() const;
-    u16* getPiiName();
+    const wchar_t* name() const;
 
-    s8 attackEfficacy(s32 attackType) const;
+    s32 attackEfficacy(s32 attackType) const;
     static s32 getTypeOnTypeEfficacy(s32 attackType, s32 defenderType);
 
     static const PiiProp *get(u16 dex_number, s32 form_number);

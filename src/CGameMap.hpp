@@ -1,7 +1,12 @@
-#include <MSL_Common/detail/msl_smart_pointers.hpp>
+#pragma once
+
 #include <types.h>
+#include <vector>
+#include <MSL_Common/detail/msl_smart_pointers.hpp>
 #include <ppu/CPpuEnv.hpp>
-#include <BWorld.hpp>
+
+class BWorld;
+
 class CShadowCamera;
 class CDividedGround;
 class CPostEffect;
@@ -94,8 +99,9 @@ public:
     s32 m_battleRoyalTimer; // 0x24
     s32 m_battleRoyalTimerSpeed; // 0x28
     s32 m_movementLockTimer; // ? 0x2C
-    char pad0x40[0x10];
-    std::tr1::shared_ptr<BWorld> m_bWorld; // 0x40
+    u32 m_unk1; // 0x30
+    std::vector<s32> m_unkVec; // 0x34
+    std::tr1::shared_ptr<BWorld> m_world; // 0x40
     std::tr1::shared_ptr<CPostEffect> m_postEffect; // 0x48
     std::tr1::shared_ptr<CWorldObjStatDisplay> m_worldObjStatDisplay; // 0x50
     std::tr1::shared_ptr<CMiniMap> m_miniMap; // 0x58

@@ -1,7 +1,8 @@
 #include <PiiDex.hpp>
 #include <PiiProp.hpp>
-extern u16* getLocalizedName(u32 stringId, u16* param_2);
-extern u16 lbl_804B5C48;
+extern wchar_t lbl_804B5C48[4];
+
+#include <MsgRes.hpp>
 
 bool isMonsNoValid(u16 monsNo) { return 1 <= monsNo && monsNo <= 495; }
 
@@ -63,33 +64,33 @@ const char *PiiProp::modelName(u16 sex) const { return m_modelName[sex & 1]; }
 f32 PiiProp::walkSpeedCoeff() const { return m_walkSpeedCoeff; }
 f32 PiiProp::walkAnmRate() const { return m_walkAnmRate; }
 
-u16* PiiProp::getPiiName() {
-    return getLocalizedName(m_bitf.monsNo + 0x30000 - 0x1, &lbl_804B5C48);
-}
+const wchar_t* PiiProp::name() const { return getLocalizedName(monsNo() + 0x30000 - 0x1, lbl_804B5C48); }
 
-static const u8 unknownTable[6][5] = {
+// maybe attack multiplier?
+const s8 unknownTable[6][5] = {
     {0, 0, 0, 0, 0}, 
     {0, 0, 0, 0, 0},
-    {0, 0, 1, 2, 3}, // not very effective lane
-    {0, 0, 2, 3, 4}, // effective lane
-    {0, 0, 3, 4, 5}, // super effective lane
+    {0, 0, 1, 2, 3},
+    {0, 0, 2, 3, 4},
+    {0, 0, 3, 4, 5},
     {0, 0, 0, 0, 0}
 };
 
-static const s8 typeChart[18][18] = {
+const s8 efficacyChart[18][18] = {
 #include <typeChart.inc>
 };
 
-s8 PiiProp::attackEfficacy(s32 attackType) const {
+s32 PiiProp::attackEfficacy(s32 attackType) const {
     s32 type1 = PiiProp::type1();
     s32 type2 = PiiProp::type2();
     s32 efficacy1 = type1 == type2 ? 3 : getTypeOnTypeEfficacy(attackType, type2);
     s32 efficacy2 = getTypeOnTypeEfficacy(attackType, type1);
-    return unknownTable[efficacy1][efficacy2];
+
+    return unknownTable[efficacy2][efficacy1];
 }
 
 s32 getTypeOnTypeEfficacy(s32 attackType, s32 defenderType) {
-    return typeChart[attackType][defenderType];
+    return efficacyChart[attackType][defenderType];
 }
 
 #include <PiiPropAll.cpp>

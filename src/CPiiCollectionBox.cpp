@@ -1,34 +1,31 @@
 #include <CPiiCollectionBox.hpp>
-extern s32 gMaxDefeated;
+static const s32 gMaxDefeated = 0x98967f;
 
-void CPiiCollectionBox::setCollectionType(u32 dexNo, u32 formNo, s32 collectionState, bool isShiny) {
+void CPiiCollectionBox::setCollectionType(s32 dexNo, s32 formNo, s32 collectionState, bool isShiny) {
     PiiCollectionEntries* entry = &m_entries[dexNo];
 
-    if (entry->m_collectionType < collectionState) {
-        entry->m_collectionType = collectionState;
+    if (entry->collectionType < collectionState) {
+        entry->collectionType = collectionState;
     }
 
     if (collectionState == 3) {
         if (isShiny) {
-            entry->m_collectedShiny |= 1 << (formNo >> 0x1f) - (formNo << 27);
+            entry->collectedShiny |= 1 << (formNo % 32);
         } else {
-            entry->m_collectedNormal |= 1 << (formNo >> 0x1f) - (formNo << 27);
+            entry->collectedNormal |= 1 << (formNo % 32);
         }
     }
     if (collectionState == 2) {
-        s32 newDefeatCount = entry->m_defeatCount + 1;
-        s32* tmp = &newDefeatCount;
-        
-        if (9999999 < newDefeatCount) {
-            tmp = &gMaxDefeated;
-        }
+        s32 newDefeatCount = entry->defeatCount + 1;
 
-        entry->m_defeatCount = *tmp;
+        const s32* result = 9999999 < newDefeatCount ? &gMaxDefeated : &newDefeatCount;
+
+        entry->defeatCount = *result;
     }
 }
 
 s32 CPiiCollectionBox::getCollectionType(u32 dexNo) {
-    return m_entries[dexNo].m_collectionType;
+    return m_entries[dexNo].collectionType;
 }
 
 CPiiCollectionBox::PiiCollectionEntries* CPiiCollectionBox::getPiiCollectionEntries(u32 dexNo) {
@@ -36,15 +33,15 @@ CPiiCollectionBox::PiiCollectionEntries* CPiiCollectionBox::getPiiCollectionEntr
 }
 
 s32 CPiiCollectionBox::getCollectedNormal(u32 dexNo) {
-    return m_entries[dexNo].m_collectedNormal;
+    return m_entries[dexNo].collectedNormal;
 }
 
 s32 CPiiCollectionBox::getCollectedShiny(u32 dexNo) {
-    return m_entries[dexNo].m_collectedShiny;
+    return m_entries[dexNo].collectedShiny;
 }
 
 void CPiiCollectionBox::setCollectionBRR(u32 dexNo, s32 mode, s32 brRank) {
-    s32* rank = &m_entries[dexNo].m_normalRank + mode;
+    s32* rank = &m_entries[dexNo].normalRank + mode;
 
     if (*rank >= brRank) {
         return;
@@ -54,10 +51,10 @@ void CPiiCollectionBox::setCollectionBRR(u32 dexNo, s32 mode, s32 brRank) {
 }
 
 s32 CPiiCollectionBox::getCollectionBRR(u32 dexNo, s32 mode) {
-    s32* rank = &m_entries[dexNo].m_normalRank + mode;
+    s32* rank = &m_entries[dexNo].normalRank + mode;
     return *rank;
 }
 
 s32 CPiiCollectionBox::getDefeatCount(u32 dexNo) {
-    return m_entries[dexNo].m_defeatCount;
+    return m_entries[dexNo].defeatCount;
 }

@@ -1,13 +1,13 @@
 #include <CPiiPersonalData.hpp>
 #include <MSL_Common/detail/msl_smart_pointers.hpp>
 #include <revolution/OS/OSTime.h>
+#include <MsgRes.hpp>
 void fn_801119B0(std::tr1::shared_ptr<s32> &);
 u32 rand_fn_8019DFC0();
 extern s32 gMinHP;
-extern u16 lbl_804B5C48;
-u16* getLocalizedName(u32 nameId, u16* param_2);
+extern wchar_t lbl_804B5C48[4];
 
-s32 calculateSexForSpecies(PiiProp &ppr, s32 sex) {
+s32 calculateSexForSpecies(const PiiProp &ppr, s32 sex) {
     if (ppr.isMaleOnly()) { return PiiSex::Male; }
     if (ppr.isFemaleOnly()) { return PiiSex::Female; }
     if (ppr.isUnknown()) { return PiiSex::Unknown; }
@@ -16,7 +16,7 @@ s32 calculateSexForSpecies(PiiProp &ppr, s32 sex) {
     return !!sex;
 }
 
-CPiiPersonalData::CPiiPersonalData(u32 counter, u32 trainerId, PiiProp &ppr,
+CPiiPersonalData::CPiiPersonalData(u32 counter, u32 trainerId, const PiiProp &ppr,
                                    s32 sex) {
     m_flags = 0;
     m_unkownCounter = counter;
@@ -163,7 +163,7 @@ void CPiiPersonalData::setAttackPower(u32 attackPower) {
     m_attackPower = attackPower;
 }
 
-void CPiiPersonalData::setBonusAttackPower(u32 bonusAttackPower) {
+void CPiiPersonalData::setBonusAttackPower(s32 bonusAttackPower) {
     m_bonusAttackPower = bonusAttackPower;
 }
 
@@ -171,13 +171,13 @@ void CPiiPersonalData::setDefencePower(u32 defencePower) {
     m_defencePower = defencePower;
 }
 
-void CPiiPersonalData::setBonusDefencePower(u32 bonusDefencePower) {
+void CPiiPersonalData::setBonusDefencePower(s32 bonusDefencePower) {
     m_bonusDefencePower = bonusDefencePower;
 }
 
 void CPiiPersonalData::setSpeed(u32 speed) { m_speed = speed; }
 
-void CPiiPersonalData::setBonusSpeed(u32 bonusSpeed) {
+void CPiiPersonalData::setBonusSpeed(s32 bonusSpeed) {
     m_bonusSpeed = bonusSpeed;
 }
 
@@ -187,10 +187,10 @@ void CPiiPersonalData::setBattlePower(u32 battlePower) {
 
 void CPiiPersonalData::setGroupNo(u32 groupNo) { m_groupNo = groupNo; }
 
-void CPiiPersonalData::setTrait(u32 trait) { m_trait = trait; }
+void CPiiPersonalData::setTrait(s32 trait) { m_trait = trait; }
 
-u16* CPiiPersonalData::getTraitName() {
-    return getLocalizedName(m_trait + 0x6001D, &lbl_804B5C48);
+const wchar_t* CPiiPersonalData::getTraitName() {
+    return getLocalizedName(m_trait + 0x6001D, lbl_804B5C48);
 }
 
 void CPiiPersonalData::setBossFlag(bool enable) {
@@ -218,3 +218,71 @@ void CPiiPersonalData::setReleaseFlag(bool enable) {
 }
 
 void CPiiPersonalData::setPrice(u32 price) { m_price = price; }
+
+void CPiiPersonalData::ppdToSD(SD_PpdData* ppdSaveData) {
+    ppdSaveData->monsNo = m_piiProp->monsNo();
+    ppdSaveData->formNo = m_piiProp->formNo();
+    ppdSaveData->sex = m_sex;
+
+    ppdSaveData->moveIds[0] = m_moveIds[0];
+    ppdSaveData->moveIds[1] = m_moveIds[1];
+    ppdSaveData->level = m_level;
+
+    s32 bonusMaxHP = m_bonusMaxHP;
+    ppdSaveData->lo_bonusMaxHP = bonusMaxHP;
+    ppdSaveData->hi_bonusMaxHP = bonusMaxHP >> 16;
+
+    s32 bonusAttackPower = m_bonusAttackPower;
+    ppdSaveData->lo_bonusAttackPower = bonusAttackPower;
+    ppdSaveData->hi_bonusAttackPower = bonusAttackPower >> 16;
+
+    s32 bonusDefencePower = m_bonusDefencePower;
+    ppdSaveData->lo_bonusDefencePower = bonusDefencePower;
+    ppdSaveData->hi_bonusDefencePower = bonusDefencePower >> 16;
+
+    s32 bonusSpeed = m_bonusSpeed;
+    ppdSaveData->lo_bonusSpeed = bonusSpeed;
+    ppdSaveData->hi_bonusSpeed = bonusSpeed >> 16;
+
+    ppdSaveData->trait = m_trait;
+    ppdSaveData->flags = m_flags;
+    ppdSaveData->piiId = m_piiId;
+    ppdSaveData->time = m_time;
+    ppdSaveData->trainerId = m_trainerId;
+}
+
+std::tr1::shared_ptr<CPiiPersonalData> SDToPpd(u32 index, SD_PpdData* ppdSaveData) {
+    u16 monsNo = ppdSaveData->monsNo;
+
+    if (!isMonsNoValid(monsNo)) {
+        return std::tr1::shared_ptr<CPiiPersonalData>();
+    }
+
+    u8 formNo = ppdSaveData->formNo;
+
+    if (!isFormValidForMon(monsNo, formNo)) {
+        return std::tr1::shared_ptr<CPiiPersonalData>();
+    }
+        
+    const PiiProp* piiProp = PiiProp::get(monsNo, formNo);
+    u32 sex = ppdSaveData->sex;
+
+    std::tr1::shared_ptr<CPiiPersonalData> ppdShared(new CPiiPersonalData(index, 0, *piiProp, sex));
+
+    CPiiPersonalData* ppd = ppdShared.get();
+
+    ppd->m_moveIds[0] = ppdSaveData->moveIds[0];
+    ppd->m_moveIds[1] = ppdSaveData->moveIds[1];
+    ppd->m_level = ppdSaveData->level;
+    ppd->m_bonusMaxHP = (ppdSaveData->hi_bonusMaxHP << 16) | ppdSaveData->lo_bonusMaxHP;
+    ppd->m_bonusAttackPower = (ppdSaveData->hi_bonusAttackPower << 16) | ppdSaveData->lo_bonusAttackPower;
+    ppd->m_bonusDefencePower = (ppdSaveData->hi_bonusDefencePower << 16) | ppdSaveData->lo_bonusDefencePower;
+    ppd->m_bonusSpeed = (ppdSaveData->hi_bonusSpeed << 16) | ppdSaveData->lo_bonusSpeed;
+    ppd->m_trait = ppdSaveData->trait;
+    ppd->m_flags = (ppd->m_flags & 0xFFFF0000) | ppdSaveData->flags;
+    ppd->m_piiId = ppdSaveData->piiId;
+    ppd->m_time = ppdSaveData->time;
+    ppd->m_trainerId = ppdSaveData->trainerId;
+
+    return ppdShared;
+}

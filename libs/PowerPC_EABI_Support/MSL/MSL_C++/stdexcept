@@ -13,7 +13,9 @@ namespace std {
     public:
         // explicit logic_error(const string &what_arg);
         explicit logic_error(const char *what_arg)
-            : m_What(new char[strlen(what_arg) + 1]) {}
+            : m_What(new char[strlen(what_arg) + 1], detail::default_delete<char[]>()) {
+                strcpy(m_What.get(), what_arg);
+            }
 
         virtual const char *what() const { return m_What.get(); }
 

@@ -317,16 +317,21 @@ config.libs = [
     Game(
         [
             Object(NonMatching, "BSoundSource.cpp"),
+            Object(NonMatching, "BWorld.cpp"),
             Object(NonMatching, "BWorldObj.cpp"),
             Object(NonMatching, "BModelObj.cpp"),
             Object(NonMatching, "CComboDisplay.cpp"),
             Object(NonMatching, "CGameSession.cpp"),
             Object(NonMatching, "CGameStage.cpp"),
             Object(NonMatching, "CGameMap.cpp"),
+            Object(NonMatching, "CMsgRes.cpp"),
+            Object(NonMatching, "MsgRes.cpp"),
             Object(NonMatching, "CPiiBox.cpp"),
             Object(NonMatching, "CPiiCollectionBox.cpp"),
             Object(NonMatching, "CPiiPersonalData.cpp"),
+            Object(NonMatching, "CStatistic.cpp"),
             Object(NonMatching, "PiiProp.cpp"),
+            Object(NonMatching, "ppu/CPpuCode.cpp"),
             Object(NonMatching, "ppu/CPpuEngine.cpp"),
             Object(NonMatching, "ppu/CEngine.cpp"),
         ]

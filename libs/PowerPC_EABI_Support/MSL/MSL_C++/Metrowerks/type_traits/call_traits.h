@@ -33,7 +33,14 @@ namespace Metrowerks {
         typedef T &reference;
         typedef const T &const_reference;
         typedef const value_type param_type;
-};
+    };
+
+    template <class T> struct ct_imp<T, true, true, false> {
+        typedef typename remove_reference<T>::type value_type;
+        typedef T reference;
+        typedef const T const_reference;
+        typedef reference param_type;
+    };
 } // namespace details
 
 template <class T> struct call_traits {
